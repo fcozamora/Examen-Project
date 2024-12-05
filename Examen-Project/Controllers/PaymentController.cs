@@ -16,56 +16,26 @@ namespace Examen_Project.Controllers
         private readonly string clientName = "franZa";
         private readonly string key = "test01";
 
-        // GET: Payment/Index (List all payments)
+        // GET: Payment/Index
         public async Task<ActionResult> Index()
         {
             try
             {
-                // Fetch all payments from the API
-                var payments = await _payments.GetAllPaymentsAsync(clientName, key);
-                bool anyErrors = false;
+                
+                var payments = await _payments.GetPaymentsAsync(clientName, key);
                 string errorMessage = string.Empty;
 
-                // Insert each payment into the database using PaymentDao
+                
                 foreach (var payment in payments)
-                {
-                    // Insert the payment into the database
-                    var result = _payments.MySqlCreatePayment(payment);
-                    if (result != "Success")
-                    {
-                        // Log or handle failed inserts
-                        anyErrors = true;
-                        errorMessage += $"Failed to insert payment ID: {payment.id}, Reason: {result}\n";
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Payment ID: {payment.id} inserted successfully.");
-                    }
+                {                    
+                    var result = _payments.MySqlCreatePayment(payment);               
                 }
 
-                // Add success or error messages
-                if (anyErrors)
-                {
-                    TempData["ErrorMessage"] = "Some payments failed to be added to the database. Details: " + errorMessage;
-                }
-                else
-                {
-                    TempData["SuccessMessage"] = "All payments processed and saved successfully.";
-                }
-
-                // Return the view with fetched payments
                 return View(payments);
-            }
-            catch (InvalidOperationException ex)
-            {
-                // Handle authentication failure
-                ViewBag.ErrorMessage = ex.Message;
-                return View("Error");
             }
             catch (Exception ex)
             {
-                // Handle other types of errors
-                ViewBag.ErrorMessage = "An unexpected error occurred: " + ex.Message;
+                Console.WriteLine(ex.Message); ;
                 return View("Error");
             }
         }
@@ -77,40 +47,36 @@ namespace Examen_Project.Controllers
             return View();
         }
 
-        // POST: Payment/Create (Handle the creation of a new payment)
+        // POST: Payment/Create
         [HttpPost]
         public async Task<ActionResult> Create(PaymentDTO payment)
         {
             try
-            {
-                // Validate payment fields
+            {                
                 if (string.IsNullOrEmpty(payment.email) || payment.amount <= 0)
                 {
-                    TempData["ErrorMessage"] = "Please fill all fields and provide a valid payment amount.";
+                    Console.WriteLine("Please type a valid email or amount.");
                     return View(payment);
                 }
 
-                //Authenticates contact information
                 await _payments.AuthenticateAsync(clientName, key);
 
-                //Creates a new payment
                 var paymentResult = await _payments.CreatePaymentAsync(payment);
 
                 if (paymentResult)
                 {
-                    // Payment was processed successfully via the API
-                    TempData["SuccessMessage"] = "Payment processed successfully.";
+                    Console.WriteLine("Payment processed successfully.");
                     return RedirectToAction("Create");
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = "Payment processing failed. Please try again.";
+                    Console.WriteLine("Failed to create payment");
                     return View(payment);
                 }
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "An error occurred while processing the payment: " + ex.Message;
+                Console.WriteLine(ex.Message);
                 return View(payment);
             }
         }

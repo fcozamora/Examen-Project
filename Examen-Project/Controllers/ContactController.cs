@@ -44,22 +44,10 @@ namespace Examen_Project.Controllers
         {
             client = clientName;
             keyPass = key;
-            try
-            {
-                var contact = await _contacts.GetContactsByEmailAsync(client, keyPass, email);
 
-                if (contact == null)
-                {
-                    Console.WriteLine("Could'nt find the contact.");
-                    return View("Error");
-                }
+            var contact = await _contacts.GetContactsByEmailAsync(client, keyPass, email);
 
-                return View(contact);
-            }
-            catch
-            {
-                return View("Error");
-            }
+            return View(contact);
         }
 
         // GET: Contact/Create

@@ -40,9 +40,10 @@ namespace Examen_Project.Models.DAO
             }
         }
 
-        public async Task<List<PaymentDTO>> GetAllPaymentsAsync(string clientId, string tokenPass)
+        //Get all payments from the API
+        public async Task<List<PaymentDTO>> GetPaymentsAsync(string clientId, string tokenPass)
         {
-            var credentials = apiCnx.AuthenticateAsync(clientId, tokenPass);
+            var _token = apiCnx.AuthenticateAsync(clientId, tokenPass); //Gets the bearer token from API
 
             try
             {
@@ -63,6 +64,7 @@ namespace Examen_Project.Models.DAO
             }
         }
 
+        //Creates a new payment in the API
         public async Task<bool> CreatePaymentAsync(PaymentDTO payment)
         {
             var content = new StringContent(JsonConvert.SerializeObject(payment), Encoding.UTF8, "application/json");
@@ -77,6 +79,7 @@ namespace Examen_Project.Models.DAO
         }
 
 
+        //Stores all the payments created in the local DataBase
         public string MySqlCreatePayment(PaymentDTO payment)
         {
             string response = "Failed";
@@ -86,14 +89,14 @@ namespace Examen_Project.Models.DAO
                 using (var connection = MysqlCnx.getCnx())
                 {
                     connection.Open();
-                    string query = "INSERT INTO payments (id, contactId, amount, status, dateAdded) VALUES (@id, @clientId, @amount, @status, @dateAdded)";
+                    string query = "INSERT INTO payout (id, contactId, amount, status, dateAdded) VALUES (@id, @clientId, @amount, @status, @dateAdded)";
                     MySqlCommand sqlCmd = new MySqlCommand(query, connection);
 
                     sqlCmd.Parameters.AddWithValue("@id", payment.id);
-                    sqlCmd.Parameters.AddWithValue("@clientId id", payment.clientId);
-                    sqlCmd.Parameters.AddWithValue("@Amount", payment.amount);
-                    sqlCmd.Parameters.AddWithValue("@Status", payment.status);
-                    sqlCmd.Parameters.AddWithValue("@Created", payment.dateAdded);
+                    sqlCmd.Parameters.AddWithValue("@clientId", payment.clientId);
+                    sqlCmd.Parameters.AddWithValue("@amount", payment.amount);
+                    sqlCmd.Parameters.AddWithValue("@status", payment.status);
+                    sqlCmd.Parameters.AddWithValue("@dateAdded", payment.dateAdded);
 
                     int rowsAffected = sqlCmd.ExecuteNonQuery();
                     if (rowsAffected > 0)

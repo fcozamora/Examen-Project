@@ -15,9 +15,6 @@
             @Html.DisplayNameFor(model => model.email)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.clientId)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.amount)
         </th>
         <th>
@@ -32,18 +29,13 @@
             @Html.DisplayFor(modelItem => item.email)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.clientId)
-        </td>
-        <td>
             @Html.DisplayFor(modelItem => item.amount)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.status)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.id }) |
             @Html.ActionLink("Details", "Details", new { id=item.id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.id })
         </td>
     </tr>
 }

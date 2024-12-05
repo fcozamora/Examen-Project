@@ -67,12 +67,15 @@ namespace Examen_Project.Models.DAO
             }
         }
 
+        //Get contact information by email.
         public async Task<List<ContactDTO>> GetContactsByEmailAsync(string clientId, string tokenPass, string email)
         {
+
             var _token = apiCnx.AuthenticateAsync(clientId, tokenPass);
+
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"{_apiUrl}/payout/contact.php?mail={email}");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{_apiUrl}/payout/contact.php?email={email}");
                 request.Headers.Add("Authorization", $"Bearer {_token}");
 
                 var response = await _client.SendAsync(request);
@@ -89,21 +92,22 @@ namespace Examen_Project.Models.DAO
             }
         }
 
+        //Attemps to create a new contact on the API
         public async Task<bool> CreateContactAsync(string clientId, string tokenPass, ContactDTO newContact)
         {
             var _token = apiCnx.AuthenticateAsync(clientId, tokenPass);
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, $"{_apiUrl}/payout/contact.php?email={newContact.email}");
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{_apiUrl}/payout/contact.php?email={newContact.Email}");
                 request.Headers.Add("Authorization", $"Bearer {_token}");
 
                 var content = new StringContent(JsonConvert.SerializeObject(new
                 {
-                    first_name = newContact.firstName,
-                    last_name = newContact.lastName,
-                    newPhone = newContact.phone,
-                    newEmail = newContact.email
-                }), Encoding.UTF8, "application/json");
+                    first_name = newContact.First_Name,
+                    last_name = newContact.Last_Name,
+                    Phone = newContact.Phone,
+                    Email = newContact.Email
+                }), null, "application/json");
 
                 request.Content = content;
 
@@ -118,6 +122,7 @@ namespace Examen_Project.Models.DAO
             }
         }
 
+        //Attemps to add contacts to the database
         public string AddContactMysql(ContactDTO contact)
         {
             string response = "Failed";
@@ -131,11 +136,11 @@ namespace Examen_Project.Models.DAO
                                    "VALUES (@clientId, @firstName, @lastName, @phone, @email)";
                     MySqlCommand cmd = new MySqlCommand(query, connection);
 
-                    cmd.Parameters.AddWithValue("@clientId", contact.id);
-                    cmd.Parameters.AddWithValue("@firstName", contact.firstName);
-                    cmd.Parameters.AddWithValue("@lastName", contact.lastName);
-                    cmd.Parameters.AddWithValue("@phone", contact.phone);
-                    cmd.Parameters.AddWithValue("@email", contact.email);
+                    cmd.Parameters.AddWithValue("@clientId", contact.Id);
+                    cmd.Parameters.AddWithValue("@firstName", contact.First_Name);
+                    cmd.Parameters.AddWithValue("@lastName", contact.Last_Name);
+                    cmd.Parameters.AddWithValue("@phone", contact.Phone);
+                    cmd.Parameters.AddWithValue("@email", contact.Email);
 
 
                     int rowsAffected = cmd.ExecuteNonQuery();
