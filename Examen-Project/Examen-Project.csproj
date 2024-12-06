@@ -181,6 +181,7 @@
     <Compile Include="Models\ApiCnx.cs" />
     <Compile Include="Models\DAO\ContactDAO.cs" />
     <Compile Include="Models\DAO\PaymentDAO.cs" />
+    <Compile Include="Models\DAO\ReportesDAO.cs" />
     <Compile Include="Models\DTO\ContactDTO.cs" />
     <Compile Include="Models\DTO\PaymentDTO.cs" />
     <Compile Include="Models\MysqlCnx.cs" />

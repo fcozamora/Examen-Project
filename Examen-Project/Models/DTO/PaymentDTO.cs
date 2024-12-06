@@ -21,7 +21,7 @@ namespace Examen_Project.Models.DTO
 
         [Required(ErrorMessage = "An amount is required")]
         
-        public decimal amount { get; set; }
+        public int amount { get; set; }
 
         public string status { get; set; }
         public Timestamp dateAdded { get; set; }
